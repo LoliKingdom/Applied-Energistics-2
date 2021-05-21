@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
+import ic2.api.item.ICustomDamageItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -56,6 +57,32 @@ final class AESharedItemStack implements Comparable<AESharedItemStack>
 	ItemStack getDefinition()
 	{
 		return this.itemStack;
+	}
+
+	boolean isDamageable()
+	{
+		if (this.itemStack.getItem() instanceof ICustomDamageItem ){
+			return ((ICustomDamageItem) this.itemStack.getItem()).getMaxCustomDamage( this.itemStack ) > 0;
+		}
+		return this.itemStack.getItem().isDamageable();
+	}
+
+	int getCustomDamage()
+	{
+		if( this.itemStack.getItem() instanceof ICustomDamageItem )
+		{
+			return ( ( ICustomDamageItem ) this.itemStack.getItem() ).getCustomDamage( this.itemStack );
+		}
+		return this.itemStack.getItemDamage();
+	}
+
+	int getMaxDamage()
+	{
+		if( this.itemStack.getItem() instanceof ICustomDamageItem )
+		{
+			return ( ( ICustomDamageItem ) this.itemStack.getItem() ).getMaxCustomDamage( this.itemStack );
+		}
+		return this.itemStack.getMaxDamage();
 	}
 
 	int getItemDamage()

@@ -21,6 +21,7 @@ package appeng.util.helpers;
 
 import javax.annotation.Nonnull;
 
+import ic2.api.item.ICustomDamageItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -95,22 +96,39 @@ public class ItemComparisonHelper
 		}
 
 		// test damageable items..
-		if( a.getItem() == b.getItem() && a.getItem().isDamageable() )
-		{
+		if( a.getItem() == b.getItem() && a.getItem().isDamageable() ){
 			if( mode == FuzzyMode.IGNORE_ALL )
 			{
 				return true;
 			}
-			else if( mode == FuzzyMode.PERCENT_99 )
-			{
-				return ( a.getItemDamage() > 1 ) == ( b.getItemDamage() > 1 );
-			}
-			else
-			{
-				final float percentDamagedOfA = (float) a.getItemDamage() / (float) a.getMaxDamage();
-				final float percentDamagedOfB = (float) b.getItemDamage() / (float) b.getMaxDamage();
 
-				return ( percentDamagedOfA > mode.breakPoint ) == ( percentDamagedOfB > mode.breakPoint );
+			if ( a.getItem() instanceof ICustomDamageItem ) {
+				ICustomDamageItem icdi = ((ICustomDamageItem ) a.getItem());
+				if( mode == FuzzyMode.PERCENT_99 )
+				{
+					return ( icdi.getCustomDamage( a ) > 1 ) == ( icdi.getCustomDamage( b ) > 1 );
+				}
+				else
+				{
+					final float percentDamagedOfA = ( float ) icdi.getCustomDamage( a ) / ( float ) icdi.getMaxCustomDamage( a );
+					final float percentDamagedOfB = ( float ) icdi.getCustomDamage( b ) / ( float ) icdi.getMaxCustomDamage( b );
+
+					return ( percentDamagedOfA > mode.breakPoint ) == ( percentDamagedOfB > mode.breakPoint );
+				}
+			} else
+			{
+
+				if( mode == FuzzyMode.PERCENT_99 )
+				{
+					return ( a.getItemDamage() > 1 ) == ( b.getItemDamage() > 1 );
+				}
+				else
+				{
+					final float percentDamagedOfA = ( float ) a.getItemDamage() / ( float ) a.getMaxDamage();
+					final float percentDamagedOfB = ( float ) b.getItemDamage() / ( float ) b.getMaxDamage();
+
+					return ( percentDamagedOfA > mode.breakPoint ) == ( percentDamagedOfB > mode.breakPoint );
+				}
 			}
 		}
 

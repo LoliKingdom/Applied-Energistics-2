@@ -218,6 +218,11 @@ public final class AEItemStack extends AEStack<IAEItemStack> implements IAEItemS
 		return this.sharedStack.getItemDamage();
 	}
 
+	public int getMaxDamage()
+	{
+		return this.sharedStack.getMaxDamage();
+	}
+
 	@Override
 	public boolean sameOre( final IAEItemStack is )
 	{
